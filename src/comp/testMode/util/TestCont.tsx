@@ -1,6 +1,6 @@
 import styles from "./TestCont.module.css";
 import React from "react";
-import { RestartButton } from "./ResultsCont";
+import { RestartBtn } from "./ResultsCont";
 
 export function TestCont({ restart, children, isTyping }: { restart: () => void, isTyping: boolean } & React.PropsWithChildren) {
     return (
@@ -8,7 +8,7 @@ export function TestCont({ restart, children, isTyping }: { restart: () => void,
             {isTyping
                 ? <div>
                     <div className={styles.testCont}>{children}</div>
-                    <RestartButton onClick={restart} />
+                    <RestartBtn onClick={restart} />
                 </div>
                 : children}
         </div>

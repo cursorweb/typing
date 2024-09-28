@@ -4,8 +4,7 @@ import warmups from "data/warmups.json";
 import { randomk } from "./util/random";
 import { TestCont } from "./util/TestCont";
 import { useReducer } from "react";
-import { ResultsCont } from "./util/ResultsCont";
-import { CharTestCont } from "./CharTestCont";
+import { PracticeBtn, ResultsCont, ResultBar } from "./util/ResultsCont";
 
 interface WarmupState {
     isTyping: boolean,
@@ -49,7 +48,7 @@ function reducer(state: WarmupState, action: TestContAction): WarmupState {
                     results
                 };
             }
-        
+
         case "results":
             return {
                 ...state,
@@ -60,7 +59,7 @@ function reducer(state: WarmupState, action: TestContAction): WarmupState {
         case "practice":
             return {
                 ...state,
-                isTyping: true,
+                isTyping: false, // don't let the user restart
                 render: action.render
             };
     }
@@ -69,18 +68,19 @@ function reducer(state: WarmupState, action: TestContAction): WarmupState {
 export function WarmupCont({ wIdx }: { wIdx: number }) {
     const warmupData = warmups[wIdx];
 
+    // not sure why I need to curry but it works so...
     const onCharDone = (idx: number) => (res: CharTestResult) => {
         dispatch({
             type: "next",
             result: (
-                <ResultsCont
-                    key={idx}
-                    practice={() => dispatch({
-                        type: "practice",
-                        render: <CharTest chars={res.wrongChars} onDone={() => dispatch({ type: "results" })} />
-                    })}
-                >
+                <ResultsCont key={idx}>
                     <div>char test: {res.cpm} / {res.acc}</div>
+                    <ResultBar>
+                        <PracticeBtn onClick={() => dispatch({
+                            type: "practice",
+                            render: <CharTest chars={res.wrongChars} onDone={() => dispatch({ type: "results" })} />
+                        })} />
+                    </ResultBar>
                 </ResultsCont>
             )
         });
@@ -90,20 +90,21 @@ export function WarmupCont({ wIdx }: { wIdx: number }) {
         dispatch({
             type: "next",
             result: (
-                <ResultsCont
-                    key={idx}
-                    practice={() => dispatch({
-                        type: "practice",
-                        render: <WordTest chars={res.wrongWords.join(" ").split("")} onDone={() => dispatch({ type: "results" })} />
-                    })}
-                >
+                <ResultsCont key={idx}>
                     <div>word test: {res.wpm} / {res.acc}</div>
+
+                    <ResultBar>
+                        <PracticeBtn onClick={() => dispatch({
+                            type: "practice",
+                            render: <WordTest chars={res.wrongWords.join(" ").split("")} onDone={() => dispatch({ type: "results" })} />
+                        })} />
+                    </ResultBar>
                 </ResultsCont>
             )
         });
     }
 
-    const [{ isTyping, render, idx }, dispatch] = useReducer(reducer, null, () => ({
+    const [{ isTyping, render }, dispatch] = useReducer(reducer, null, () => ({
         isTyping: true,
         results: [],
         render: genTest(0),

@@ -1,7 +1,7 @@
 import { WordTest, WordTestResult } from "comp/testType/WordTest";
 import { TestCont } from "./util/TestCont";
 import { useTestReducer } from "./util/TestContReducer";
-import { ResultsCont } from "./util/ResultsCont";
+import { ResultsCont, ResultBar, RestartBtn, PracticeBtn } from "./util/ResultsCont";
 
 export function WordTestCont({ genText }: { genText: () => string[] }) {
     const [{ isTyping, render }, dispatch] = useTestReducer(() => <WordTest chars={genText()} onDone={onDone} key={Math.random()} />);
@@ -10,13 +10,7 @@ export function WordTestCont({ genText }: { genText: () => string[] }) {
         dispatch({
             type: "done",
             render: (
-                <ResultsCont
-                    restart={() => dispatch({ type: "restart" })}
-                    practice={() => dispatch({
-                        type: "redo",
-                        genTest: () => <WordTest chars={res.wrongWords.join(" ").split("")} onDone={onDone} key={Math.random()} />
-                    })}
-                >
+                <ResultsCont>
                     <div>{res.wpm} WPM</div>
                     <div>{res.acc}% ACC</div>
                     <div>
@@ -27,6 +21,13 @@ export function WordTestCont({ genText }: { genText: () => string[] }) {
                             </div>
                         )}
                     </div>
+                    <ResultBar>
+                        <RestartBtn onClick={() => dispatch({ type: "restart" })} />
+                        <PracticeBtn onClick={() => dispatch({
+                            type: "redo",
+                            genTest: () => <WordTest chars={res.wrongWords.join(" ").split("")} onDone={onDone} key={Math.random()} />
+                        })} />
+                    </ResultBar>
                 </ResultsCont>
             )
         })

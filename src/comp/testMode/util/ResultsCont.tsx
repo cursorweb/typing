@@ -1,18 +1,22 @@
 import React, { useRef, useEffect } from "react";
 
-export function ResultsCont({ children, restart, practice }: { restart?: () => void, practice: () => void } & React.PropsWithChildren) {
+export function ResultsCont({ children }: React.PropsWithChildren) {
     return (
         <div>
             {children}
-            <div>
-                {restart ? <RestartButton onClick={restart} /> : null}
-                <PracticeButton onClick={practice} />
-            </div>
         </div>
     );
 }
 
-export function PracticeButton({ onClick }: { onClick: () => void }) {
+export function ResultBar({ children }: React.PropsWithChildren) {
+    return (
+        <div>
+            {children}
+        </div>
+    );
+}
+
+export function PracticeBtn({ onClick }: { onClick: () => void }) {
     const redoButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
@@ -32,7 +36,7 @@ export function PracticeButton({ onClick }: { onClick: () => void }) {
     );
 }
 
-export function RestartButton({ onClick }: { onClick: () => void }) {
+export function RestartBtn({ onClick }: { onClick: () => void }) {
     const restartButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
